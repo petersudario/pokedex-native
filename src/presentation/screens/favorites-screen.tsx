@@ -1,7 +1,17 @@
 import React, { useContext } from "react";
-import { View, FlatList, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  FlatList,
+  Image,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Platform,
+  StatusBar,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { FavoritesContext } from "../context/favorites-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function FavoritesScreen() {
   const { favorites } = useContext(FavoritesContext);
@@ -16,21 +26,28 @@ export default function FavoritesScreen() {
   }
 
   return (
-    <FlatList
-      data={favorites}
-      keyExtractor={(item) => item.id.toString()}
-      numColumns={2}
-      contentContainerStyle={styles.list}
-      renderItem={({ item }) => (
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => navigation.navigate("Details", { pokemon: item })}
-        >
-          <Image source={{ uri: item.image }} style={styles.image} />
-          <Text style={styles.name}>{item.name}</Text>
-        </TouchableOpacity>
-      )}
-    />
+    <SafeAreaView
+      style={{
+        flex: 1,
+        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+      }}
+    >
+      <FlatList
+        data={favorites}
+        keyExtractor={(item) => item.id.toString()}
+        numColumns={2}
+        contentContainerStyle={styles.list}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => navigation.navigate("Details", { pokemon: item })}
+          >
+            <Image source={{ uri: item.image }} style={styles.image} />
+            <Text style={styles.name}>{item.name}</Text>
+          </TouchableOpacity>
+        )}
+      />
+    </SafeAreaView>
   );
 }
 
