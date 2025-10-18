@@ -1,9 +1,17 @@
 import React from "react";
-import { View, Text, FlatList, Image, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  ActivityIndicator,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 import { usePokemons } from "../hooks/use-pokemon";
 
 export default function HomeScreen() {
-  const { pokemons, loading } = usePokemons();
+  const { pokemons, loading, loadingMore, loadMore, hasMore } = usePokemons();
 
   if (loading) {
     return (
@@ -25,6 +33,21 @@ export default function HomeScreen() {
           <Text style={styles.name}>{item.name}</Text>
         </View>
       )}
+      ListFooterComponent={
+        hasMore ? (
+          <View style={styles.footer}>
+            {loadingMore ? (
+              <ActivityIndicator size="small" color="#888" />
+            ) : (
+              <TouchableOpacity style={styles.button} onPress={loadMore}>
+                <Text style={styles.buttonText}>Carregar mais</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        ) : (
+          <Text style={styles.endText}>Todos os Pokémons carregados!</Text>
+        )
+      }
     />
   );
 }
@@ -50,6 +73,25 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontWeight: "600",
     textTransform: "capitalize",
+  },
+  footer: {
+    paddingVertical: 20,
+    alignItems: "center",
+  },
+  button: {
+    backgroundColor: "#007AFF",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "600",
+  },
+  endText: {
+    textAlign: "center",
+    paddingVertical: 20,
+    color: "#666",
   },
   center: {
     flex: 1,
