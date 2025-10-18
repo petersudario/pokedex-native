@@ -1,14 +1,40 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, Image, ActivityIndicator, StyleSheet, FlatList } from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  ActivityIndicator,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { PokemonRepository } from "../../data/repositories/pokemon-repository";
 import { PokemonService } from "../../data/services/pokemon-service";
+import { FavoritesContext } from "../context/favorites-context";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function PokemonDetailsScreen() {
   const route: any = useRoute();
   const { pokemon } = route.params;
   const [details, setDetails] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  const { addFavorite, removeFavorite, isFavorite } =
+    useContext(FavoritesContext);
+
+  const favorite = details ? isFavorite(details) : false;
+
+  const toggleFavorite = () => {
+    if (!details) return;
+    if (favorite) removeFavorite(details);
+    else
+      addFavorite({
+        id: details.id,
+        name: details.name,
+        image: details.sprites.other["official-artwork"].front_default,
+      });
+  };
 
   useEffect(() => {
     const loadDetails = async () => {
@@ -36,11 +62,13 @@ export default function PokemonDetailsScreen() {
   return (
     <View style={styles.container}>
       <Image
-        source={{ uri: details.sprites.other["official-artwork"].front_default }}
+        source={{
+          uri: details.sprites.other["official-artwork"].front_default,
+        }}
         style={styles.image}
       />
       <Text style={styles.title}>
-        #{details.id} {pokemon.name.toUpperCase()}
+        #{details.id} {details.name.toUpperCase()}
       </Text>
 
       <Text style={styles.subtitle}>Tipos:</Text>
@@ -58,6 +86,18 @@ export default function PokemonDetailsScreen() {
         keyExtractor={(item) => item}
         renderItem={({ item }) => <Text style={styles.ability}>{item}</Text>}
       />
+      <View style={{ height: 16 }} />
+
+      <TouchableOpacity
+        onPress={toggleFavorite}
+        style={{ position: "absolute", top: 16, right: 16 }}
+      >
+        <Ionicons
+          name={favorite ? "heart" : "heart-outline"}
+          size={32}
+          color={favorite ? "red" : "gray"}
+        />
+      </TouchableOpacity>
     </View>
   );
 }
