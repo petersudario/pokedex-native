@@ -13,4 +13,8 @@ export class PokemonRepository implements PokemonRepositoryInterface {
     async fetchAll(offset = 0, limit = 20): Promise<Pokemon[]> {
         return this.pokemonService.fetchAll(offset, limit);
     }
+
+    async fetchByName(name: string): Promise<any> {
+        return this.pokemonService.fetchByName(name);
+    }
 }

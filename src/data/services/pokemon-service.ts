@@ -15,4 +15,10 @@ export class PokemonService {
       };
     });
   }
+
+  async fetchByName(name: string): Promise<any> {
+    const response = await ApiClient.get(`pokemon/${name}`);
+    
+    return response.data;
+  }
 }

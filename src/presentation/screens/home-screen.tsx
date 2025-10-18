@@ -9,9 +9,11 @@ import {
   StyleSheet,
 } from "react-native";
 import { usePokemons } from "../hooks/use-pokemon";
+import { useNavigation } from "@react-navigation/native";
 
 export default function HomeScreen() {
   const { pokemons, loading, loadingMore, loadMore, hasMore } = usePokemons();
+  const navigation: any = useNavigation();
 
   if (loading) {
     return (
@@ -28,10 +30,13 @@ export default function HomeScreen() {
       numColumns={2}
       contentContainerStyle={styles.list}
       renderItem={({ item }) => (
-        <View style={styles.card}>
+        <TouchableOpacity
+          style={styles.card}
+          onPress={() => navigation.navigate("Details", { pokemon: item })}
+        >
           <Image source={{ uri: item.image }} style={styles.image} />
           <Text style={styles.name}>{item.name}</Text>
-        </View>
+        </TouchableOpacity>
       )}
       ListFooterComponent={
         hasMore ? (
